@@ -1,7 +1,9 @@
 package com.groupstp.datasupplier.web.util;
 
 import com.groupstp.datasupplier.data.AddressData;
+import com.groupstp.datasupplier.data.BankData;
 import com.groupstp.datasupplier.service.AddressDataSupplierService;
+import com.groupstp.datasupplier.service.BankDataSupplierService;
 import com.groupstp.datasupplier.web.config.DataSupplierWebConfig;
 import com.groupstp.datasupplier.web.gui.components.AutocompleteTextField;
 import com.haulmont.cuba.core.global.AppBeans;
@@ -14,106 +16,111 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 /**
- * Data supplier address helper class
+ * Banks data providing UI helper class
  *
  * @author adiatullin
  */
-public final class AddressUiHelper {
-    private AddressUiHelper() {
+public final class BankUiHelper {
+    private BankUiHelper() {
     }
 
     /**
-     * Address select listener
+     * Bank select listener
      */
-    public interface AddressSelectListener {
+    public interface BankSelectListener {
         /**
-         * User clicked the address suggestion
+         * User clicked the bank suggestion
          *
          * @param field    field object which are communicated with user
-         * @param value    user selected current address
-         * @param previous previous address value
+         * @param value    user selected current bank
+         * @param previous previous bank value
          */
-        void onAddressSelect(Field field, @Nullable AddressData value, @Nullable AddressData previous);
+        void onBankSelect(Field field, @Nullable BankData value, @Nullable BankData previous);
     }
 
     /**
-     * Prepare, clean and format address data. In most cases it more detailed method than suggestions
+     * Easy way to receive a bank name
      *
-     * @param address raw address data
-     * @return formatted address
+     * @param nameBicSwiftOrAddress bank identification information
+     * @return officinal bank name
      */
-    public static String getFormattedAddress(String address) {
-        return ((AddressDataSupplierService) AppBeans.get(AddressDataSupplierService.NAME)).getFormattedAddress(address);
+    @Nullable
+    public static String getBankName(String nameBicSwiftOrAddress) {
+        BankData data = ((BankDataSupplierService) AppBeans.get(BankDataSupplierService.NAME)).getSuggestionBankDetails(nameBicSwiftOrAddress);
+        if (data != null) {
+            return data.getName();
+        }
+        return null;
     }
 
     /**
-     * Setup address suggestion field
+     * Setup bank suggestion field
      *
      * @param field UI suggestion field
      */
-    public static void showAddressSuggestions(SuggestionField field) {
-        showAddressSuggestions(field, null);
+    public static void showBankSuggestions(SuggestionField field) {
+        showBankSuggestions(field, null);
     }
 
     /**
-     * Setup address suggestion field with listener
+     * Setup bank suggestion field with listener
      *
      * @param field    UI suggestion field
-     * @param listener address select listener
+     * @param listener bank select listener
      */
-    public static void showAddressSuggestions(SuggestionField field, @Nullable AddressSelectListener listener) {
+    public static void showBankSuggestions(SuggestionField field, @Nullable BankSelectListener listener) {
         DataSupplierWebConfig config = ((Configuration) AppBeans.get(Configuration.NAME)).getConfig(DataSupplierWebConfig.class);
 
-        showAddressSuggestions(field, config.getDelayMs(), config.getMinSearchLength(), config.getFetchLimit(), listener);
+        showBankSuggestions(field, config.getDelayMs(), config.getMinSearchLength(), config.getFetchLimit(), listener);
     }
 
 
     /**
-     * Setup address suggestion field
+     * Setup bank suggestion field
      *
      * @param field           UI suggestion field
      * @param delayMs         delay in ms between user entering data and searching suggestions
      * @param minSearchLength minimum search length when suggestions should appear
      * @param count           maximum count of suggestions
      */
-    public static void showAddressSuggestions(SuggestionField field, int delayMs, int minSearchLength, int count) {
-        showAddressSuggestions(field, delayMs, minSearchLength, count, null);
+    public static void showBankSuggestions(SuggestionField field, int delayMs, int minSearchLength, int count) {
+        showBankSuggestions(field, delayMs, minSearchLength, count, null);
     }
 
     /**
-     * Setup address suggestion field with listener
+     * Setup bank suggestion field with listener
      *
      * @param field           UI suggestion field
      * @param delayMs         delay in ms between user entering data and searching suggestions
      * @param minSearchLength minimum search length when suggestions should appear
      * @param count           maximum count of suggestions
-     * @param listener        address select listener
+     * @param listener        bank select listener
      */
-    public static void showAddressSuggestions(SuggestionField field, int delayMs, int minSearchLength, int count, @Nullable AddressSelectListener listener) {
-        AddressDataSupplierService service = AppBeans.get(AddressDataSupplierService.NAME);
+    public static void showBankSuggestions(SuggestionField field, int delayMs, int minSearchLength, int count, @Nullable BankSelectListener listener) {
+        BankDataSupplierService service = AppBeans.get(BankDataSupplierService.NAME);
 
         field.setAsyncSearchDelayMs(delayMs);
         field.setMinSearchStringLength(minSearchLength);
         field.setSuggestionsLimit(count);
 
-        Map<String, AddressData> cache = new HashMap<>();
+        Map<String, BankData> cache = new HashMap<>();
         field.setSearchExecutor((search, params) -> {
             cache.clear();
 
             List<String> result = Collections.emptyList();
-            List<AddressData> items = service.getSuggestionAddressesDetails(search, field.getSuggestionsLimit());
+            List<BankData> items = service.getSuggestionsBanksDetails(search, field.getSuggestionsLimit());
             if (!CollectionUtils.isEmpty(items)) {
                 result = new ArrayList<>(items.size());
-                for (AddressData item : items) {
-                    cache.put(item.getAddress(), item);
+                for (BankData item : items) {
+                    cache.put(item.getName(), item);
 
-                    result.add(item.getAddress());
+                    result.add(item.getName());
                 }
             }
             return result;
         });
         if (listener != null) {
-            AddressData[] previousDataHolder = new AddressData[1];
+            BankData[] previousDataHolder = new BankData[1];
             field.addValueChangeListener(e -> {
                 String address = field.getValue();
 
@@ -121,7 +128,7 @@ public final class AddressUiHelper {
                 AddressData previous = previousDataHolder[0];
                 previousDataHolder[0] = current;
 
-                listener.onAddressSelect(field, current, previous);
+                listener.onBankSelect(field, current, previous);
             });
         }
     }
@@ -132,7 +139,7 @@ public final class AddressUiHelper {
      * @param field UI autocomplete field
      */
     public static void showAddressSuggestions(AutocompleteTextField field) {
-        showAddressSuggestions(field, (AddressSelectListener) null);
+        showAddressSuggestions(field, (AddressUiHelper.AddressSelectListener) null);
     }
 
     /**
@@ -141,7 +148,7 @@ public final class AddressUiHelper {
      * @param field    UI autocomplete field
      * @param listener address select listener
      */
-    public static void showAddressSuggestions(AutocompleteTextField field, @Nullable AddressSelectListener listener) {
+    public static void showAddressSuggestions(AutocompleteTextField field, @Nullable AddressUiHelper.AddressSelectListener listener) {
         DataSupplierWebConfig config = ((Configuration) AppBeans.get(Configuration.NAME)).getConfig(DataSupplierWebConfig.class);
 
         showAddressSuggestions(field, config.getDelayMs(), config.getMinSearchLength(), config.getFetchLimit(), listener);
@@ -169,7 +176,7 @@ public final class AddressUiHelper {
      * @param count           maximum count of suggestions
      * @param listener        address select listener
      */
-    public static void showAddressSuggestions(AutocompleteTextField field, int delayMs, int minSearchLength, int count, @Nullable AddressSelectListener listener) {
+    public static void showAddressSuggestions(AutocompleteTextField field, int delayMs, int minSearchLength, int count, @Nullable AddressUiHelper.AddressSelectListener listener) {
         AddressDataSupplierService service = AppBeans.get(AddressDataSupplierService.NAME);
 
         field.setAsyncSearchDelayMs(delayMs);
