@@ -6,12 +6,12 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Special data supplier service bean which provide a set of useful methods to work with different data
+ * Addresses data supplier component
  *
  * @author adiatullin
  */
-public interface DataSupplierService {
-    String NAME = "dsstp_DataSupplierService";
+public interface AddressDataSupplierService {
+    String NAME = "dsstp_AddressDataSupplierService";
 
     /**
      * Format and clean address data

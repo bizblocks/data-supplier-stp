@@ -12,8 +12,10 @@
                   ref="cuba_ServerSelector"/>
         <property name="remoteServices">
             <map>
-                <entry key="dsstp_DataSupplierService"
-                       value="com.groupstp.datasupplier.service.DataSupplierService"/>
+                <entry key="dsstp_AddressDataSupplierService"
+                       value="com.groupstp.datasupplier.service.AddressDataSupplierService"/>
+                <entry key="dsstp_BankDataSupplierService"
+                       value="com.groupstp.datasupplier.service.BankDataSupplierService"/>
             </map>
         </property>
     </bean>

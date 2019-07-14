@@ -1,7 +1,7 @@
 package com.groupstp.datasupplier.web.util;
 
 import com.groupstp.datasupplier.data.AddressData;
-import com.groupstp.datasupplier.service.DataSupplierService;
+import com.groupstp.datasupplier.service.AddressDataSupplierService;
 import com.groupstp.datasupplier.web.config.DataSupplierWebConfig;
 import com.groupstp.datasupplier.web.gui.components.AutocompleteTextField;
 import com.haulmont.cuba.core.global.AppBeans;
@@ -43,7 +43,7 @@ public final class AddressUiHelper {
      * @return formatted address
      */
     public static String getFormattedAddress(String address) {
-        return ((DataSupplierService) AppBeans.get(DataSupplierService.NAME)).getFormattedAddress(address);
+        return ((AddressDataSupplierService) AppBeans.get(AddressDataSupplierService.NAME)).getFormattedAddress(address);
     }
 
     /**
@@ -90,7 +90,7 @@ public final class AddressUiHelper {
      * @param listener        address select listener
      */
     public static void showAddressSuggestions(SuggestionField field, int delayMs, int minSearchLength, int count, @Nullable AddressSelectListener listener) {
-        DataSupplierService service = AppBeans.get(DataSupplierService.NAME);
+        AddressDataSupplierService service = AppBeans.get(AddressDataSupplierService.NAME);
 
         field.setAsyncSearchDelayMs(delayMs);
         field.setMinSearchStringLength(minSearchLength);
@@ -170,7 +170,7 @@ public final class AddressUiHelper {
      * @param listener        address select listener
      */
     public static void showAddressSuggestions(AutocompleteTextField field, int delayMs, int minSearchLength, int count, @Nullable AddressSelectListener listener) {
-        DataSupplierService service = AppBeans.get(DataSupplierService.NAME);
+        AddressDataSupplierService service = AppBeans.get(AddressDataSupplierService.NAME);
 
         field.setAsyncSearchDelayMs(delayMs);
         field.setMinSearchStringLength(minSearchLength);

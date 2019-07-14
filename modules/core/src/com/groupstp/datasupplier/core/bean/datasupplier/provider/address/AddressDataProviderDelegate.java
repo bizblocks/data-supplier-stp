@@ -1,4 +1,4 @@
-package com.groupstp.datasupplier.core.bean.datasupplier.provider;
+package com.groupstp.datasupplier.core.bean.datasupplier.provider.address;
 
 import com.groupstp.datasupplier.data.AddressData;
 import org.springframework.core.Ordered;
@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author adiatullin
  */
-public interface DataProviderDelegate extends Ordered {
+public interface AddressDataProviderDelegate extends Ordered {
 
     /**
      * Format and clean address data with additional details
