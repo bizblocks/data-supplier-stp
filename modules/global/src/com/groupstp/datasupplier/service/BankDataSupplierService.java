@@ -32,10 +32,10 @@ public interface BankDataSupplierService {
     List<BankData> getSuggestionsBanksDetails(String nameBicSwiftOrAddress, int count);
 
     /**
-     * Get more suitable bank details
+     * Get more suitable bank data
      *
      * @param nameBicSwiftOrAddress expected bank name, bic, swift code or address
-     * @return found bank detail or null if nothing found
+     * @return found bank data or null if nothing found
      */
     @Nullable
     BankData getSuggestionBankDetails(String nameBicSwiftOrAddress);

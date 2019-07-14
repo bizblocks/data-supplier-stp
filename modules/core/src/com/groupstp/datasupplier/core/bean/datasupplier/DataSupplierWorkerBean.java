@@ -1,9 +1,11 @@
 package com.groupstp.datasupplier.core.bean.datasupplier;
 
 import com.groupstp.datasupplier.core.bean.DataSupplierWorker;
-import com.groupstp.datasupplier.core.bean.datasupplier.provider.DataProviderDelegate;
+import com.groupstp.datasupplier.core.bean.datasupplier.provider.address.AddressDataProviderDelegate;
+import com.groupstp.datasupplier.core.bean.datasupplier.provider.bank.BankDataProviderDelegate;
 import com.groupstp.datasupplier.core.config.DataSupplierConfig;
 import com.groupstp.datasupplier.data.AddressData;
+import com.groupstp.datasupplier.data.BankData;
 import com.haulmont.cuba.core.global.AppBeans;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -44,21 +46,21 @@ public class DataSupplierWorkerBean implements DataSupplierWorker {
             return null;
         }
         if (!StringUtils.isBlank(rawAddress)) {
-            List<DataProviderDelegate> list = getDelegates();
+            List<AddressDataProviderDelegate> list = getAddressDelegates();
             if (!CollectionUtils.isEmpty(list)) {
-                for (DataProviderDelegate delegate : list) {
+                for (AddressDataProviderDelegate delegate : list) {
                     try {
                         AddressData result = delegate.getFormattedAddressDetails(rawAddress);
                         if (result != null && !StringUtils.isBlank(result.getAddress())) {
                             return result;
                         }
                     } catch (Exception e) {
-                        log.error(String.format("Failed to clean address from data delegate '%s'. Reason: %s", delegate.getClass(), e.getMessage()));
+                        log.error(String.format("Failed to clean address from address data delegate '%s'. Reason: %s", delegate.getClass(), e.getMessage()));
                     }
                 }
-                log.warn(String.format("Current data delegates are not support to clean up address '%s'", rawAddress));
+                log.warn(String.format("Current address data delegates are not support to clean up address '%s'", rawAddress));
             } else {
-                log.warn("Data provider delegates are not registered in system");
+                log.warn("Address data provider delegates are not registered in system");
             }
         } else {
             log.warn("Tried to clean address from empty data");
@@ -73,21 +75,21 @@ public class DataSupplierWorkerBean implements DataSupplierWorker {
             return null;
         }
         if (selected != null) {
-            List<DataProviderDelegate> list = getDelegates();
+            List<AddressDataProviderDelegate> list = getAddressDelegates();
             if (!CollectionUtils.isEmpty(list)) {
-                for (DataProviderDelegate delegate : list) {
+                for (AddressDataProviderDelegate delegate : list) {
                     try {
                         AddressData result = delegate.getExtendedSuggestionAddressDetails(selected);
                         if (result != null) {
                             return result;
                         }
                     } catch (Exception e) {
-                        log.error(String.format("Failed to prepare more detailed suggestion address from data delegate '%s'. Reason: %s", delegate.getClass(), e.getMessage()));
+                        log.error(String.format("Failed to prepare more detailed suggestion address from address data delegate '%s'. Reason: %s", delegate.getClass(), e.getMessage()));
                     }
                 }
-                log.warn("Current data delegates are not support preparing more detailed suggestion address");
+                log.warn("Current address data delegates are not support preparing more detailed suggestion address");
             } else {
-                log.warn("Data provider delegates are not registered in system");
+                log.warn("Address data provider delegates are not registered in system");
             }
         }
         return null;
@@ -114,9 +116,9 @@ public class DataSupplierWorkerBean implements DataSupplierWorker {
             return Collections.emptyList();
         }
         if (!StringUtils.isBlank(rawAddress)) {
-            List<DataProviderDelegate> list = getDelegates();
+            List<AddressDataProviderDelegate> list = getAddressDelegates();
             if (!CollectionUtils.isEmpty(list)) {
-                for (DataProviderDelegate delegate : list) {
+                for (AddressDataProviderDelegate delegate : list) {
                     try {
                         List<AddressData> result = delegate.getSuggestionAddressesDetails(rawAddress, count);
                         if (!CollectionUtils.isEmpty(result)) {
@@ -126,9 +128,9 @@ public class DataSupplierWorkerBean implements DataSupplierWorker {
                         log.error(String.format("Failed to receive suggestion address from data delegate '%s'. Reason: %s", delegate.getClass(), e.getMessage()));
                     }
                 }
-                log.warn(String.format("Current data delegates are not support to get suggestion addresses from value '%s'", rawAddress));
+                log.warn(String.format("Current address data delegates are not support to get suggestion addresses from value '%s'", rawAddress));
             } else {
-                log.warn("Data provider delegates are not registered in system");
+                log.warn("Address data provider delegates are not registered in system");
             }
         } else {
             log.warn("Tried to get suggestion address from empty data");
@@ -141,9 +143,9 @@ public class DataSupplierWorkerBean implements DataSupplierWorker {
         if (!Boolean.TRUE.equals(config.getEnabled())) {
             return Collections.emptyList();
         }
-        List<DataProviderDelegate> list = getDelegates();
+        List<AddressDataProviderDelegate> list = getAddressDelegates();
         if (!CollectionUtils.isEmpty(list)) {
-            for (DataProviderDelegate delegate : list) {
+            for (AddressDataProviderDelegate delegate : list) {
                 try {
                     List<AddressData> result = delegate.getSuggestionAddressesDetails(latitude, longitude, count);
                     if (!CollectionUtils.isEmpty(result)) {
@@ -153,12 +155,56 @@ public class DataSupplierWorkerBean implements DataSupplierWorker {
                     log.error(String.format("Failed to receive suggestion address from geo coordinates by data delegate '%s'. Reason: %s", delegate.getClass(), e.getMessage()));
                 }
             }
-            log.warn(String.format("Current data delegates are not support to get suggestion addresses from geo coordinates '%f':'%f'", latitude, longitude));
+            log.warn(String.format("Current address data delegates are not support to get suggestion addresses from geo coordinates '%f':'%f'", latitude, longitude));
         } else {
-            log.warn("Data provider delegates are not registered in system");
+            log.warn("Address data provider delegates are not registered in system");
         }
         return Collections.emptyList();
     }
+
+    @Override
+    public List<String> getSuggestionBanks(String nameBicSwiftOrAddress, int count) {
+        if (!Boolean.TRUE.equals(config.getEnabled())) {
+            return Collections.emptyList();
+        }
+        List<BankData> banks = getSuggestionsBanksDetails(nameBicSwiftOrAddress, count);
+        if (!CollectionUtils.isEmpty(banks)) {
+            return banks.stream()
+                    .map(this::prepareBank)
+                    .filter(e -> !StringUtils.isBlank(e))
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<BankData> getSuggestionsBanksDetails(String nameBicSwiftOrAddress, int count) {
+        if (!Boolean.TRUE.equals(config.getEnabled())) {
+            return Collections.emptyList();
+        }
+        if (!StringUtils.isBlank(nameBicSwiftOrAddress)) {
+            List<BankDataProviderDelegate> list = getBankDelegates();
+            if (!CollectionUtils.isEmpty(list)) {
+                for (BankDataProviderDelegate delegate : list) {
+                    try {
+                        List<BankData> result = delegate.getSuggestionsBanksDetails(nameBicSwiftOrAddress, count);
+                        if (!CollectionUtils.isEmpty(result)) {
+                            return result;
+                        }
+                    } catch (Exception e) {
+                        log.error(String.format("Failed to receive suggestion banks from key '%s'. Reason: '%s'", nameBicSwiftOrAddress, e.getMessage()));
+                    }
+                }
+                log.warn(String.format("Current bank delegates are not support to get suggestion from value '%s'", nameBicSwiftOrAddress));
+            } else {
+                log.warn("Bank data provider delegates are not registered in system");
+            }
+        } else {
+            log.warn("Tried to get suggestion banks from empty data");
+        }
+        return Collections.emptyList();
+    }
+
 
     @Nullable
     protected String prepareAddress(@Nullable AddressData address) {
@@ -173,10 +219,34 @@ public class DataSupplierWorkerBean implements DataSupplierWorker {
     }
 
     @Nullable
-    protected List<DataProviderDelegate> getDelegates() {
-        Map<String, DataProviderDelegate> items = AppBeans.getAll(DataProviderDelegate.class);
+    protected String prepareBank(@Nullable BankData bankData) {
+        String result = null;
+        if (bankData != null && !StringUtils.isBlank(bankData.getName())) {
+            result = bankData.getName();
+            if (!StringUtils.isBlank(bankData.getBic())) {
+                result = result + "(" + bankData.getBic() + ")";
+            }
+        }
+        return result;
+    }
+
+    @Nullable
+    protected List<AddressDataProviderDelegate> getAddressDelegates() {
+        Map<String, AddressDataProviderDelegate> items = AppBeans.getAll(AddressDataProviderDelegate.class);
         if (items != null && items.size() > 0) {
-            List<DataProviderDelegate> list = new ArrayList<>(items.size());
+            List<AddressDataProviderDelegate> list = new ArrayList<>(items.size());
+            list.addAll(items.values());
+            list.sort(Comparator.comparingInt(Ordered::getOrder));
+            return list;
+        }
+        return null;
+    }
+
+    @Nullable
+    protected List<BankDataProviderDelegate> getBankDelegates() {
+        Map<String, BankDataProviderDelegate> items = AppBeans.getAll(BankDataProviderDelegate.class);
+        if (items != null && items.size() > 0) {
+            List<BankDataProviderDelegate> list = new ArrayList<>(items.size());
             list.addAll(items.values());
             list.sort(Comparator.comparingInt(Ordered::getOrder));
             return list;

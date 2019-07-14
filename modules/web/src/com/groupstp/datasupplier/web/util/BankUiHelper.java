@@ -1,8 +1,6 @@
 package com.groupstp.datasupplier.web.util;
 
-import com.groupstp.datasupplier.data.AddressData;
 import com.groupstp.datasupplier.data.BankData;
-import com.groupstp.datasupplier.service.AddressDataSupplierService;
 import com.groupstp.datasupplier.service.BankDataSupplierService;
 import com.groupstp.datasupplier.web.config.DataSupplierWebConfig;
 import com.groupstp.datasupplier.web.gui.components.AutocompleteTextField;
@@ -42,7 +40,7 @@ public final class BankUiHelper {
      * Easy way to receive a bank name
      *
      * @param nameBicSwiftOrAddress bank identification information
-     * @return officinal bank name
+     * @return official bank name
      */
     @Nullable
     public static String getBankName(String nameBicSwiftOrAddress) {
@@ -122,10 +120,9 @@ public final class BankUiHelper {
         if (listener != null) {
             BankData[] previousDataHolder = new BankData[1];
             field.addValueChangeListener(e -> {
-                String address = field.getValue();
+                BankData current = cache.get(field.getValue());
+                BankData previous = previousDataHolder[0];
 
-                AddressData current = service.getExtendedSuggestionAddressDetails(cache.get(address));
-                AddressData previous = previousDataHolder[0];
                 previousDataHolder[0] = current;
 
                 listener.onBankSelect(field, current, previous);
@@ -134,81 +131,80 @@ public final class BankUiHelper {
     }
 
     /**
-     * Setup address suggestion field
+     * Setup bank suggestion field
      *
      * @param field UI autocomplete field
      */
-    public static void showAddressSuggestions(AutocompleteTextField field) {
-        showAddressSuggestions(field, (AddressUiHelper.AddressSelectListener) null);
+    public static void showBankSuggestions(AutocompleteTextField field) {
+        showBankSuggestions(field, null);
     }
 
     /**
-     * Setup address suggestion field with select listener
+     * Setup bank suggestion field with select listener
      *
      * @param field    UI autocomplete field
-     * @param listener address select listener
+     * @param listener bank select listener
      */
-    public static void showAddressSuggestions(AutocompleteTextField field, @Nullable AddressUiHelper.AddressSelectListener listener) {
+    public static void showBankSuggestions(AutocompleteTextField field, @Nullable BankSelectListener listener) {
         DataSupplierWebConfig config = ((Configuration) AppBeans.get(Configuration.NAME)).getConfig(DataSupplierWebConfig.class);
 
-        showAddressSuggestions(field, config.getDelayMs(), config.getMinSearchLength(), config.getFetchLimit(), listener);
+        showBankSuggestions(field, config.getDelayMs(), config.getMinSearchLength(), config.getFetchLimit(), listener);
     }
 
 
     /**
-     * Setup address suggestion field
+     * Setup bank suggestion field
      *
      * @param field           UI autocomplete field
      * @param delayMs         delay in ms between user entering data and searching suggestions
      * @param minSearchLength minimum search length when suggestions should appear
      * @param count           maximum count of suggestions
      */
-    public static void showAddressSuggestions(AutocompleteTextField field, int delayMs, int minSearchLength, int count) {
-        showAddressSuggestions(field, delayMs, minSearchLength, count, null);
+    public static void showBankSuggestions(AutocompleteTextField field, int delayMs, int minSearchLength, int count) {
+        showBankSuggestions(field, delayMs, minSearchLength, count, null);
     }
 
     /**
-     * Setup address suggestion field
+     * Setup bank suggestion field
      *
      * @param field           UI autocomplete field
      * @param delayMs         delay in ms between user entering data and searching suggestions
      * @param minSearchLength minimum search length when suggestions should appear
      * @param count           maximum count of suggestions
-     * @param listener        address select listener
+     * @param listener        bank select listener
      */
-    public static void showAddressSuggestions(AutocompleteTextField field, int delayMs, int minSearchLength, int count, @Nullable AddressUiHelper.AddressSelectListener listener) {
-        AddressDataSupplierService service = AppBeans.get(AddressDataSupplierService.NAME);
+    public static void showBankSuggestions(AutocompleteTextField field, int delayMs, int minSearchLength, int count, @Nullable BankSelectListener listener) {
+        BankDataSupplierService service = AppBeans.get(BankDataSupplierService.NAME);
 
         field.setAsyncSearchDelayMs(delayMs);
         field.setMinSearchStringLength(minSearchLength);
         field.setSuggestionsLimit(count);
 
-        Map<String, AddressData> cache = new HashMap<>();
+        Map<String, BankData> cache = new HashMap<>();
         field.setSuggestionProvider((currentValue, limit) -> {
             cache.clear();
 
             List<String> result = Collections.emptyList();
-            List<AddressData> items = service.getSuggestionAddressesDetails(currentValue, limit);
+            List<BankData> items = service.getSuggestionsBanksDetails(currentValue, limit);
             if (!CollectionUtils.isEmpty(items)) {
                 result = new ArrayList<>(items.size());
-                for (AddressData item : items) {
-                    cache.put(item.getAddress(), item);
+                for (BankData item : items) {
+                    cache.put(item.getName(), item);
 
-                    result.add(item.getAddress());
+                    result.add(item.getName());
                 }
             }
             return result;
         });
         if (listener != null) {
-            AddressData[] previousDataHolder = new AddressData[1];
+            BankData[] previousDataHolder = new BankData[1];
             field.addValueChangeListener(e -> {
-                String address = field.getValue();
+                BankData current = cache.get(field.getValue());
+                BankData previous = previousDataHolder[0];
 
-                AddressData current = service.getExtendedSuggestionAddressDetails(cache.get(address));
-                AddressData previous = previousDataHolder[0];
                 previousDataHolder[0] = current;
 
-                listener.onAddressSelect(field, current, previous);
+                listener.onBankSelect(field, current, previous);
             });
         }
     }

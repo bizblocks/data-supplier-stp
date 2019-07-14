@@ -1,4 +1,4 @@
-package com.groupstp.datasupplier.core.bean.datasupplier.provider.impl.dadata.dto;
+package com.groupstp.datasupplier.core.bean.datasupplier.provider.address.dadata.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

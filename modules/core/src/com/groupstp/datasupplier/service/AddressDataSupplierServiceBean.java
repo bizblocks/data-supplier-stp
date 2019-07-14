@@ -14,8 +14,8 @@ import java.util.List;
  *
  * @author adiatullin
  */
-@Service(DataSupplierServiceBean.NAME)
-public class DataSupplierServiceBean implements DataSupplierService {
+@Service(AddressDataSupplierService.NAME)
+public class AddressDataSupplierServiceBean implements AddressDataSupplierService {
 
     @Inject
     protected DataSupplierWorker worker;

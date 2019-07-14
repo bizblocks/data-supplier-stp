@@ -17,10 +17,10 @@ public class BankData implements Serializable {
     private String swift;
     private String registrationNumber;
     private String correspondentAccount;
+    private String okpo;
     private String name;
     private String fullName;
     private String phone;
-    private String rkc;
     private BankStatus status;
 
     public enum BankStatus {
@@ -83,6 +83,14 @@ public class BankData implements Serializable {
         this.correspondentAccount = correspondentAccount;
     }
 
+    public String getOkpo() {
+        return okpo;
+    }
+
+    public void setOkpo(String okpo) {
+        this.okpo = okpo;
+    }
+
     public String getName() {
         return name;
     }
@@ -105,14 +113,6 @@ public class BankData implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getRkc() {
-        return rkc;
-    }
-
-    public void setRkc(String rkc) {
-        this.rkc = rkc;
     }
 
     public BankStatus getStatus() {
