@@ -8,9 +8,9 @@
       maxIdle="2"
       maxWaitMillis="5000"
       driverClassName="org.hsqldb.jdbc.JDBCDriver"
-      url="jdbc:hsqldb:hsql://localhost/dsstp"
-      username="sa"
-      password=""/>
+      url="jdbc:hsqldb:hsql://localhost:5433/dsstp"
+      username="cuba"
+      password="cuba"/>
 
     <!-- Switch off session serialization -->
     <Manager pathname=""/>
