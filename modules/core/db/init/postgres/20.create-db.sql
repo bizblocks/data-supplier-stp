@@ -1,0 +1,51 @@
+-- begin RTNEOIMPORT_IM_API_ORDERS
+alter table rtneoimport_im_api_orders add constraint FK_RTNEOIMPORT_IM_API_ORDERS_ON_PDF foreign key (PDF_ID) references SYS_FILE(ID)^
+alter table rtneoimport_im_api_orders add constraint FK_RTNEOIMPORT_IM_API_ORDERS_ON_FILE foreign key (FILE_ID) references SYS_FILE(ID)^
+alter table rtneoimport_im_api_orders add constraint FK_RTNEOIMPORT_IM_API_ORDERS_ON_ADDRESS foreign key (ADDRESS_ID) references rtneoimport_im_address(ID)^
+create index IDX_RTNEOIMPORT_IM_API_ORDERS_ON_PDF on rtneoimport_im_api_orders (PDF_ID)^
+create index IDX_RTNEOIMPORT_IM_API_ORDERS_ON_FILE on rtneoimport_im_api_orders (FILE_ID)^
+create index IDX_RTNEOIMPORT_IM_API_ORDERS_ON_ADDRESS on rtneoimport_im_api_orders (ADDRESS_ID)^
+-- end RTNEOIMPORT_IM_API_ORDERS
+-- begin RTNEOIMPORT_IM_CONTRAGENT
+alter table rtneoimport_im_contragent add constraint FK_RTNEOIMPORT_IM_CONTRAGENT_ON_ZONE foreign key (ZONE_ID) references rtneoimport_im_zone(ID)^
+create index IDX_RTNEOIMPORT_IM_CONTRAGENT_ON_ZONE on rtneoimport_im_contragent (ZONE_ID)^
+-- end RTNEOIMPORT_IM_CONTRAGENT
+-- begin RTNEOIMPORT_IM_REAL_ESTATE_CATEGORY
+alter table rtneoimport_im_real_estate_category add constraint FK_RTNEOIMPORT_IM_REAL_ESTATE_CATEGORY_ON_UNIT foreign key (UNIT_ID) references rtneoimport_im_unit(ID)^
+alter table rtneoimport_im_real_estate_category add constraint FK_RTNEOIMPORT_IM_REAL_ESTATE_CATEGORY_ON_PARENT_CATEGORY foreign key (PARENT_CATEGORY_ID) references rtneoimport_im_real_estate_category(ID)^
+create index IDX_RTNEOIMPORT_IM_REAL_ESTATE_CATEGORY_ON_UNIT on rtneoimport_im_real_estate_category (UNIT_ID)^
+create index IDX_RTNEOIMPORT_IM_REAL_ESTATE_CATEGORY_ON_PARENT_CATEGORY on rtneoimport_im_real_estate_category (PARENT_CATEGORY_ID)^
+-- end RTNEOIMPORT_IM_REAL_ESTATE_CATEGORY
+-- begin RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE
+alter table rtneoimport_im_contragent_real_estate add constraint FK_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_CONTRAGENT foreign key (CONTRAGENT_ID) references rtneoimport_im_contragent(ID)^
+alter table rtneoimport_im_contragent_real_estate add constraint FK_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_REAL_ESTATE foreign key (REAL_ESTATE_ID) references rtneoimport_im_real_estate(ID)^
+alter table rtneoimport_im_contragent_real_estate add constraint FK_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_TYPE foreign key (TYPE_ID) references rtneoimport_im_real_estate_type(ID)^
+alter table rtneoimport_im_contragent_real_estate add constraint FK_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_CATEGORY foreign key (CATEGORY_ID) references rtneoimport_im_real_estate_category(ID)^
+alter table rtneoimport_im_contragent_real_estate add constraint FK_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_LANDLORD foreign key (LANDLORD_ID) references rtneoimport_im_contragent(ID)^
+alter table rtneoimport_im_contragent_real_estate add constraint FK_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_RENT_CONTRACT foreign key (RENT_CONTRACT_ID) references rtneoimport_im_contragent_file(ID)^
+create index IDX_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_CONTRAGENT on rtneoimport_im_contragent_real_estate (CONTRAGENT_ID)^
+create index IDX_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_REAL_ESTATE on rtneoimport_im_contragent_real_estate (REAL_ESTATE_ID)^
+create index IDX_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_TYPE on rtneoimport_im_contragent_real_estate (TYPE_ID)^
+create index IDX_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_CATEGORY on rtneoimport_im_contragent_real_estate (CATEGORY_ID)^
+create index IDX_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_LANDLORD on rtneoimport_im_contragent_real_estate (LANDLORD_ID)^
+create index IDX_RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE_ON_RENT_CONTRACT on rtneoimport_im_contragent_real_estate (RENT_CONTRACT_ID)^
+-- end RTNEOIMPORT_IM_CONTRAGENT_REAL_ESTATE
+-- begin RTNEOIMPORT_IM_CONTRAGENT_FILE
+alter table rtneoimport_im_contragent_file add constraint FK_RTNEOIMPORT_IM_CONTRAGENT_FILE_ON_CONTRAGENT foreign key (CONTRAGENT_ID) references rtneoimport_im_contragent(ID)^
+alter table rtneoimport_im_contragent_file add constraint FK_RTNEOIMPORT_IM_CONTRAGENT_FILE_ON_FILE foreign key (FILE_ID) references SYS_FILE(ID)^
+create index IDX_RTNEOIMPORT_IM_CONTRAGENT_FILE_ON_CONTRAGENT on rtneoimport_im_contragent_file (CONTRAGENT_ID)^
+create index IDX_RTNEOIMPORT_IM_CONTRAGENT_FILE_ON_FILE on rtneoimport_im_contragent_file (FILE_ID)^
+-- end RTNEOIMPORT_IM_CONTRAGENT_FILE
+-- begin RTNEOIMPORT_IM_REAL_ESTATE
+alter table rtneoimport_im_real_estate add constraint FK_RTNEOIMPORT_IM_REAL_ESTATE_ON_PARENT foreign key (PARENT_ID) references rtneoimport_im_real_estate(ID)^
+alter table rtneoimport_im_real_estate add constraint FK_RTNEOIMPORT_IM_REAL_ESTATE_ON_ZONE foreign key (ZONE_ID) references rtneoimport_im_zone(ID)^
+alter table rtneoimport_im_real_estate add constraint FK_RTNEOIMPORT_IM_REAL_ESTATE_ON_ADDRESS_ foreign key (ADDRESS__ID) references rtneoimport_im_address(ID)^
+create index IDX_RTNEOIMPORT_IM_REAL_ESTATE_ON_PARENT on rtneoimport_im_real_estate (PARENT_ID)^
+create index IDX_RTNEOIMPORT_IM_REAL_ESTATE_ON_ZONE on rtneoimport_im_real_estate (ZONE_ID)^
+create index IDX_RTNEOIMPORT_IM_REAL_ESTATE_ON_ADDRESS_ on rtneoimport_im_real_estate (ADDRESS__ID)^
+-- end RTNEOIMPORT_IM_REAL_ESTATE
+-- begin RTNEOIMPORT_API_ROSREESTR_CADASTER_SEARCH_RESPONSE
+alter table RTNEOIMPORT_API_ROSREESTR_CADASTER_SEARCH_RESPONSE add constraint FK_RTNEOIMPORT_APIROSRECADASSEARCRESPO_ON_IM_ADDRESS foreign key (IM_ADDRESS_ID) references rtneoimport_im_address(ID)^
+create unique index IDX_RTNEOIMPORT_API_ROSREESTR_CADASTER_SEARCH_RESPONSE_UNQ on RTNEOIMPORT_API_ROSREESTR_CADASTER_SEARCH_RESPONSE (CADNOMER, REQUEST_MODE) where DELETE_TS is null ^
+create index IDX_RTNEOIMPORT_APIROSRECADASSEARCRESPO_ON_IM_ADDRESS on RTNEOIMPORT_API_ROSREESTR_CADASTER_SEARCH_RESPONSE (IM_ADDRESS_ID)^
+-- end RTNEOIMPORT_API_ROSREESTR_CADASTER_SEARCH_RESPONSE

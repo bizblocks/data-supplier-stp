@@ -1,0 +1,2 @@
+alter table rtneoimport_im_api_orders add constraint FK_RTNEOIMPORT_IM_API_ORDERS_ON_ADDRESS foreign key (ADDRESS_ID) references rtneoimport_im_address(ID);
+create index IDX_RTNEOIMPORT_IM_API_ORDERS_ON_ADDRESS on rtneoimport_im_api_orders (ADDRESS_ID);
