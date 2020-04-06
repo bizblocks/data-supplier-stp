@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <metadata xmlns="http://schemas.haulmont.com/cuba/metadata.xsd">
 
-    <metadata-model root-package="com.groupstp.datasupplier" namespace="dsstp"/>
+    <metadata-model root-package="com.groupstp.datasupplier" namespace="dsstp">
+        <class>com.groupstp.datasupplier.entity.ImContragentApiCall</class>
+        <class>com.groupstp.datasupplier.entity.ImContragent</class>
+        <class>com.groupstp.datasupplier.entity.ImZone</class>
+        <class>com.groupstp.datasupplier.entity.ImContragentRealEstate</class>
+        <class>com.groupstp.datasupplier.entity.ImContragentFile</class>
+        <class>com.groupstp.datasupplier.entity.ImRealEstate</class>
+        <class>com.groupstp.datasupplier.entity.ImRealEstateType</class>
+        <class>com.groupstp.datasupplier.entity.ImRealEstateCategory</class>
+        <class>com.groupstp.datasupplier.entity.ImAddress</class>
+        <class>com.groupstp.datasupplier.entity.ImUnit</class>
+        <class>com.groupstp.datasupplier.entity.ImAPIOrders</class>
+    </metadata-model>
+
 
 </metadata>

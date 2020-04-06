@@ -19,6 +19,8 @@ buildscript {
 }
 
 def modulePrefix = 'dsstp'
+def myMavenRepoWriteUrl='https://mymavenrepo.com/repo/0XUkRNxO1wlvyHqfF9U9/'
+def myMavenRepoReadUrl='https://mymavenrepo.com/repo/8nW04Xlvs0TNbEzfXmWz/'
 
 def globalModule = project(":${modulePrefix}-global")
 def coreModule = project(":${modulePrefix}-core")
@@ -33,11 +35,14 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.groupstp.datasupplier'
-        version = "1.2.0"
+        version = "1.2.4"
         isSnapshot = false
     }
     tomcat {
         dir = "$project.rootDir/deploy/tomcat"
+    }
+    uploadRepository {
+        url = myMavenRepoWriteUrl
     }
 }
 
@@ -46,7 +51,7 @@ dependencies {
 
 }
 
-def hsql = 'org.hsqldb:hsqldb:2.4.1'
+def postgres = 'org.postgresql:postgresql:9.4.1212'
 
 configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'java')
@@ -99,8 +104,8 @@ configure(coreModule) {
     dependencies {
         compile(globalModule)
         provided(servletApi)
-        jdbc(hsql)
-        testRuntime(hsql)
+        jdbc(postgres)
+        testRuntime(postgres)
 
     }
 
@@ -121,19 +126,19 @@ configure(coreModule) {
     }
 
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
-        dbms = 'hsql'
+        dbms = 'postgres'
         host = 'localhost'
-        dbName = 'dsstp'
-        dbUser = 'sa'
-        dbPassword = ''
+        dbName = 'cuba'
+        dbUser = 'cuba'
+        dbPassword = 'cuba'
     }
 
     task updateDb(dependsOn: assembleDbScripts, description: 'Updates local database', type: CubaDbUpdate) {
-        dbms = 'hsql'
+        dbms = 'postgres'
         host = 'localhost'
-        dbName = 'dsstp'
-        dbUser = 'sa'
-        dbPassword = ''
+        dbName = 'cuba'
+        dbUser = 'cuba'
+        dbPassword = 'cuba'
     }
 }
     

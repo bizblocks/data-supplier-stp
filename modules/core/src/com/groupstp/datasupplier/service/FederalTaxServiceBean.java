@@ -1,6 +1,6 @@
 package com.groupstp.datasupplier.service;
 
-import com.groupstp.datasupplier.core.bean.federal_tax.FederalTaxWorkerBean;
+import com.groupstp.datasupplier.core.bean.FederalTaxWorker;
 import com.groupstp.datasupplier.entity.ImContragent;
 import com.groupstp.datasupplier.exception.FederalTaxException;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import javax.inject.Inject;
 public class FederalTaxServiceBean implements FederalTaxService {
 
     @Inject
-    FederalTaxWorkerBean federalTaxWorkerBean;
+    FederalTaxWorker federalTaxWorkerBean;
 
     @Nullable
     @Override
